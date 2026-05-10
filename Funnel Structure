@@ -1,0 +1,25 @@
+sentinel-black-funnel/
+│
+├── app/
+│   ├── layout.js
+│   ├── page.js
+│   │
+│   ├── waitlist/
+│   │   └── page.js
+│   │
+│   ├── success/
+│   │   └── page.js
+│   │
+│   └── api/
+│       └── waitlist/
+│           └── route.js
+│
+├── components/
+│   ├── CTAButton.jsx
+│   ├── FeatureGrid.jsx
+│   ├── Footer.jsx
+│   └── Header.jsx
+│
+├── styles/
+│   └── globals.css
+│
