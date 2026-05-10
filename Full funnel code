@@ -1,0 +1,243 @@
+SENTINEL BLACK — FULL FUNNEL CODE BUNDLE (Next.js App Router)
+
+Below is the entire working funnel, ready to paste into your repo.
+
+---
+
+📁 Folder Structure
+
+funnel/
+│
+├── app/
+│   ├── layout.js
+│   ├── page.js
+│   ├── waitlist/
+│   │   └── page.js
+│   ├── success/
+│   │   └── page.js
+│   └── api/
+│       └── waitlist/
+│           └── route.js
+│
+├── components/
+│   ├── CTAButton.jsx
+│   ├── FeatureGrid.jsx
+│   ├── Footer.jsx
+│   └── Header.jsx
+│
+├── styles/
+│   └── globals.css
+│
+├── package.json
+├── tailwind.config.js
+├── postcss.config.js
+└── next.config.js
+
+
+---
+
+🧩 1. package.json
+
+{
+  "name": "sentinel-black-funnel",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "14.1.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "@supabase/supabase-js": "^2.39.0",
+    "lucide-react": "^0.344.0",
+    "tailwindcss": "^3.4.1",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31"
+  }
+}
+
+
+---
+
+🧩 2. next.config.js
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  experimental: {
+    appDir: true
+  }
+};
+
+module.exports = nextConfig;
+
+
+---
+
+🧩 3. tailwind.config.js
+
+module.exports = {
+  content: [
+    "./app/**/*.{js,jsx}",
+    "./components/**/*.{js,jsx}"
+  ],
+  theme: {
+    extend: {}
+  },
+  plugins: []
+};
+
+
+---
+
+🧩 4. postcss.config.js
+
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {}
+  }
+};
+
+
+---
+
+🧩 5. styles/globals.css
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #0a0a0a;
+  color: white;
+}
+
+
+---
+
+🧩 6. app/layout.js
+
+export const metadata = {
+  title: "Sentinel Black",
+  description: "Forensic Intelligence Funnel"
+};
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body className="bg-black text-white">{children}</body>
+    </html>
+  );
+}
+
+
+---
+
+🧩 7. app/page.js (Landing Page)
+
+import Link from "next/link";
+
+export default function Home() {
+  return (
+    <main className="p-10 text-center">
+      <h1 className="text-4xl font-bold mb-4">Sentinel Black</h1>
+      <p className="text-lg mb-6">
+        The Forensic Intelligence Platform for Modern Investigators.
+      </p>
+
+      <Link
+        href="/waitlist"
+        className="px-6 py-3 bg-white text-black rounded-md font-semibold"
+      >
+        Join the Waitlist
+      </Link>
+    </main>
+  );
+}
+
+
+---
+
+🧩 8. app/waitlist/page.js
+
+"use client";
+
+import { useState } from "react";
+
+export default function WaitlistPage() {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  async function submitEmail() {
+    await fetch("/api/waitlist", {
+      method: "POST",
+      body: JSON.stringify({ email })
+    });
+
+    setSubmitted(true);
+  }
+
+  return (
+    <main className="p-10 text-center">
+      <h1 className="text-3xl font-bold mb-4">Join the Waitlist</h1>
+
+      {!submitted ? (
+        <>
+          <input
+            type="email"
+            placeholder="Your email"
+            className="p-3 rounded-md text-black w-64"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+
+          <button
+            onClick={submitEmail}
+            className="block mx-auto mt-4 px-6 py-3 bg-white text-black rounded-md font-semibold"
+          >
+            Submit
+          </button>
+        </>
+      ) : (
+        <p className="text-xl mt-6">You're on the list.</p>
+      )}
+    </main>
+  );
+}
+
+
+---
+
+🧩 9. app/success/page.js
+
+export default function Success() {
+  return (
+    <main className="p-10 text-center">
+      <h1 className="text-3xl font-bold mb-4">You're In</h1>
+      <p className="text-lg">Thank you for joining the Sentinel Black waitlist.</p>
+    </main>
+  );
+}
+
+
+---
+
+🧩 10. app/api/waitlist/route.js
+
+import { createClient } from "@supabase/supabase-js";
+
+export async function POST(req) {
+  const { email } = await req.json();
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+
+  await supabase.from("waitlist").insert({ email });
+
+  return new Response("OK", { status: 200 });
+}
+
